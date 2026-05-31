@@ -33,23 +33,30 @@
     );
   }
 
+  const DOMAIN_SHORT = {
+    'cl-gfp': 'General',
+    'cl-rmi': 'Insurance',
+    'cl-inv': 'Investments',
+    'cl-tax': 'Tax',
+    'cl-ret': 'Retirement',
+    'cl-est': 'Estate',
+  };
+
   function Checklist({ nav, dark, done, toggle }) {
     const T = getTheme(dark);
-    const [filterBucket, setFilterBucket]   = useState(null);
+    const [filterBucket,   setFilterBucket]   = useState(null);
     const [filterPriority, setFilterPriority] = useState(null);
-    const [filterStatus, setFilterStatus]   = useState(null);
-    const [filterDomain, setFilterDomain]   = useState(null);
-    const [expanded, setExpanded]           = useState({});
+    const [filterStatus,   setFilterStatus]   = useState(null);
+    const [expanded,       setExpanded]       = useState({});
 
     const groups = window.DATA.checklist;
-    const all    = groups.flatMap(g => g.items.map(i => ({ ...i, domain: g.title, domainId: g.id })));
+    const all    = groups.flatMap(g => g.items.map(i => ({ ...i, domainId: g.id })));
 
     const filtered = all.filter(item => {
-      if (filterBucket   && item.bucket.toLowerCase()   !== filterBucket)   return false;
-      if (filterPriority && item.priority               !== filterPriority) return false;
-      if (filterStatus   === 'done' && !done[item.id])  return false;
-      if (filterStatus   === 'todo' && done[item.id])   return false;
-      if (filterDomain   && item.domainId               !== filterDomain)   return false;
+      if (filterBucket   && item.bucket.toLowerCase() !== filterBucket) return false;
+      if (filterPriority && item.priority             !== filterPriority) return false;
+      if (filterStatus   === 'done' && !done[item.id]) return false;
+      if (filterStatus   === 'todo' &&  done[item.id]) return false;
       return true;
     });
 
@@ -59,7 +66,6 @@
     const bucketOptions   = ['Flashcard', 'Calculation', 'Reference', 'Combo'];
     const priorityOptions = [{ val: 'high', label: 'High' }, { val: 'medium', label: 'Med' }, { val: 'low', label: 'Low' }];
     const statusOptions   = [{ val: 'todo', label: 'To Do' }, { val: 'done', label: 'Done' }];
-    const domainOptions   = groups.map(g => ({ val: g.id, label: g.title.split(' ').slice(-1)[0] }));
 
     const bucketColor = {
       Flashcard:   dark ? '#7BB8F5' : '#1A4F8A',
@@ -68,7 +74,7 @@
       Combo:       dark ? '#B49EEA' : '#4A2E8A',
     };
 
-    const toggleNote = (id) => setExpanded(e => ({ ...e, [id]: !e[id] }));
+    const toggleNote = (id, e) => { e.stopPropagation(); setExpanded(ex => ({ ...ex, [id]: !ex[id] })); };
 
     return (
       <Screen title="Checklist" eyebrow="All 166 topics" onBack={nav.back} dark={dark}>
@@ -86,6 +92,7 @@
 
         {/* filters */}
         <div style={{ padding: '0 22px 20px', borderBottom: `1px solid ${T.hair}` }}>
+
           <Eyebrow color={T.faint} style={{ marginBottom: 9 }}>Bucket</Eyebrow>
           <div style={{ display: 'flex', gap: 8, marginBottom: 18, flexWrap: 'wrap' }}>
             <FilterChip label="All" active={!filterBucket} onClick={() => setFilterBucket(null)} dark={dark} />
@@ -101,15 +108,6 @@
             {priorityOptions.map(opt => (
               <FilterChip key={opt.val} label={opt.label} active={filterPriority === opt.val}
                 onClick={() => setFilterPriority(filterPriority === opt.val ? null : opt.val)} dark={dark} />
-            ))}
-          </div>
-
-          <Eyebrow color={T.faint} style={{ marginBottom: 9 }}>Domain</Eyebrow>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 18, flexWrap: 'wrap' }}>
-            <FilterChip label="All" active={!filterDomain} onClick={() => setFilterDomain(null)} dark={dark} />
-            {domainOptions.map(opt => (
-              <FilterChip key={opt.val} label={opt.label} active={filterDomain === opt.val}
-                onClick={() => setFilterDomain(filterDomain === opt.val ? null : opt.val)} dark={dark} />
             ))}
           </div>
 
@@ -132,7 +130,7 @@
           <div style={{ padding: '20px 22px 0' }}>
             <div style={{ background: T.listCard, borderRadius: 16, overflow: 'hidden', border: T.listBorder }}>
               {filtered.map((item, idx) => {
-                const on = !!done[item.id];
+                const on    = !!done[item.id];
                 const isExp = !!expanded[item.id];
                 const bColor = bucketColor[item.bucket] || T.faint;
                 const pColor = item.priority === 'high'
@@ -140,6 +138,7 @@
                   : item.priority === 'medium'
                   ? (dark ? '#FFD93D' : '#D4800A')
                   : (dark ? '#6BCB77' : '#27AE60');
+                const domainLabel = DOMAIN_SHORT[item.domainId] || item.domainId;
 
                 return (
                   <div key={item.id} style={{ borderTop: idx ? `1px solid ${T.hair}` : 'none' }}>
@@ -155,7 +154,7 @@
                             textDecorationColor: T.faint, marginBottom: 5 }}>
                             {item.label}
                           </div>
-                          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                             <span style={{ fontFamily: F.mono, fontSize: 9, letterSpacing: '.04em',
                               textTransform: 'uppercase', color: bColor, fontWeight: 700 }}>
                               {item.bucket}
@@ -166,12 +165,12 @@
                             </span>
                             <span style={{ fontFamily: F.mono, fontSize: 9, letterSpacing: '.04em',
                               textTransform: 'uppercase', color: T.faint }}>
-                              {item.domain.split(' ').slice(-2).join(' ')}
+                              {domainLabel}
                             </span>
                           </div>
                         </div>
                         {item.note ? (
-                          <button onClick={(e) => { e.stopPropagation(); toggleNote(item.id); }}
+                          <button onClick={(e) => toggleNote(item.id, e)}
                             style={{ background: 'transparent', border: 'none', cursor: 'pointer',
                               fontFamily: F.mono, fontSize: 16, color: T.faint, padding: '0 2px',
                               flexShrink: 0, WebkitTapHighlightColor: 'transparent', marginTop: 1 }}>
