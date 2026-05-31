@@ -49,8 +49,6 @@
   }
 
   function Home({ nav, stats, onToggle, dark }) {
-    // DEBUG: log dark value
-    console.log('Home dark=', dark, 'appearance would be', dark ? 'navy' : 'paper');
     const days = daysUntil(window.DATA.exam.date);
     const ringTrack = dark ? COLORS.creamHair  : COLORS.navyHair;
     const ringBar   = dark ? COLORS.cream      : COLORS.navy;

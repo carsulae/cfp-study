@@ -202,7 +202,7 @@
 
     return (
       <div style={{ padding: '20px 20px 0' }}>
-        <p style={{ ...{ fontFamily: F.sans, fontSize: 14, color: T.muted, margin: '0 0 22px', lineHeight: 1.5 }, fontFamily: "\"IBM Plex Sans\"" }}>
+        <p style={{ fontFamily: F.sans, fontSize: 14, color: T.muted, margin: '0 0 22px', lineHeight: 1.5 }}>
           {r.blurb}
         </p>
 

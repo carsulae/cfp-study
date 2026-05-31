@@ -121,7 +121,7 @@
           opacity: visible ? 1 : 0, pointerEvents: visible ? 'auto' : 'none',
           transition: 'opacity .12s linear', transitionDelay: visible ? '.22s' : '0s',
           background: bg, borderRadius: 22, padding: '30px 26px', boxShadow: shadow,
-          display: 'flex', flexDirection: 'column', justifyContent: 'center' }, background: "rgb(28, 43, 74)" }}>
+          display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
         <div style={{ fontFamily: F.mono, fontSize: 10.5, letterSpacing: '.18em',
           textTransform: 'uppercase', color: lab, marginBottom: 18 }}>{label}</div>
         <div style={{ fontFamily: isBack ? F.sans : F.serif,
