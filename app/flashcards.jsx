@@ -115,7 +115,7 @@
     const lab = dark ? COLORS.navyMute : COLORS.creamFaint;
     const shadow = dark ? '0 10px 30px rgba(0,0,0,.14)' : '0 8px 28px rgba(61,91,133,.22)';
     return (
-      <div style={{ ...{
+      <div style={{
           position: 'absolute', inset: 0, backfaceVisibility: 'hidden', WebkitBackfaceVisibility: 'hidden',
           transform: isBack ? 'rotateY(180deg)' : 'none',
           opacity: visible ? 1 : 0, pointerEvents: visible ? 'auto' : 'none',
