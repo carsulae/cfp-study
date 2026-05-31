@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CFP Study — Home Directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  html, body { margin: 0; padding: 0; }
+  :root{
+    --paper:#F4F0E6;
+    --paper-2:#FBF8F1;
+    --card:#FFFFFF;
+    --ink:#211F1A;
+    --ink-2:#4A463E;
+    --muted:#807A6E;
+    --hair:#E2DBCB;
+    --navy:#1C2B4A;
+    --navy-2:#26395F;
+    --navy-soft:#3C4E72;
+    --cream:#EDE6D6;
+    --clay:#A8674A;
+    --serif:'Spectral', Georgia, serif;
+    --sans:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+  }
+  * { -webkit-font-smoothing: antialiased; }
+  .scr { position:absolute; inset:0; display:flex; flex-direction:column; }
+  .eyebrow{ font-family:var(--mono); font-size:11px; letter-spacing:.18em; text-transform:uppercase; }
+  .serif{ font-family:var(--serif); }
+  .sans{ font-family:var(--sans); }
+  .mono{ font-family:var(--mono); }
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script type="text/babel" src="frames/ios-frame.jsx"></script>
+<script type="text/babel" src="frames/design-canvas.jsx"></script>
+
+<script type="text/babel">
+const { useState } = React;
+
+/* ───────────────────────── shared bits ───────────────────────── */
+
+// simple line-icons (kept geometric per design rules)
+const Icon = ({ name, size=22, stroke='#1C2B4A', sw=1.6 }) => {
+  const common = { width:size, height:size, viewBox:'0 0 24 24', fill:'none',
+    stroke, strokeWidth:sw, strokeLinecap:'round', strokeLinejoin:'round' };
+  const paths = {
+    checklist: <><rect x="4" y="3.5" width="16" height="17" rx="2.5"/><path d="M8 9l2 2 3.5-3.5"/><path d="M8 15.5h7"/></>,
+    cards: <><rect x="3.5" y="6.5" width="13" height="11" rx="2"/><path d="M8 4.5h10a2 2 0 0 1 2 2v8"/></>,
+    refs: <><path d="M6 4h9a2 2 0 0 1 2 2v14l-5.5-2.8L6 20V4z"/><path d="M9.5 8.5h4"/></>,
+    calc: <><rect x="5" y="3.5" width="14" height="17" rx="2.5"/><path d="M8.5 8h7M8.5 12.5h2.5M14 12.5h1.5M8.5 16.5h2.5M14 16.5h1.5"/></>,
+  };
+  return <svg {...common}>{paths[name]}</svg>;
+};
+
+const SECTIONS = [
+  { n:'01', key:'checklist', title:'Checklist',    desc:'Build your study materials',   meta:'8 / 20', sub:'tasks done' },
+  { n:'02', key:'cards',     title:'Flashcards',   desc:'Spaced-repetition review',     meta:'240',    sub:'cards' },
+  { n:'03', key:'refs',      title:'References',   desc:'Decision trees & comparisons', meta:'18',     sub:'sets' },
+  { n:'04', key:'calc',      title:'Calculations', desc:'Step-by-step problem guides',  meta:'26',     sub:'guides' },
+];
+
+// progress ring
+const Ring = ({ pct=42, size=64, sw=6, track='rgba(255,255,255,.22)', bar='#EDE6D6', label, color='#EDE6D6' }) => {
+  const r = (size - sw)/2, c = 2*Math.PI*r, off = c*(1-pct/100);
+  return (
+    <div style={{ position:'relative', width:size, height:size }}>
+      <svg width={size} height={size} style={{ transform:'rotate(-90deg)' }}>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={track} strokeWidth={sw}/>
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={bar} strokeWidth={sw}
+          strokeDasharray={c} strokeDashoffset={off} strokeLinecap="round"/>
+      </svg>
+      <div style={{ position:'absolute', inset:0, display:'flex', alignItems:'center', justifyContent:'center',
+        fontFamily:'var(--mono)', fontSize:15, fontWeight:600, color }}>{label ?? pct+'%'}</div>
+    </div>
+  );
+};
+
+/* ───────────────────────── A · Reading Room ───────────────────────── */
+function HomeA(){
+  return (
+    <div className="scr" style={{ background:'var(--paper)' }}>
+      <div style={{ padding:'78px 30px 0' }}>
+        <div className="eyebrow" style={{ color:'var(--clay)' }}>CFP Candidate · Nov 2026</div>
+        <div className="serif" style={{ fontSize:40, lineHeight:1.05, color:'var(--ink)', marginTop:14, fontWeight:500, letterSpacing:'-.01em' }}>
+          Study<br/>Index
+        </div>
+        <div className="sans" style={{ fontSize:14, color:'var(--muted)', marginTop:12, lineHeight:1.5 }}>
+          Four ways in. Pick up where you left off.
+        </div>
+      </div>
+
+      <div style={{ marginTop:26 }}>
+        {SECTIONS.map((s,i)=>(
+          <div key={s.key} style={{ padding:'0 30px' }}>
+            {i!==0 && <div style={{ height:1, background:'var(--hair)' }}/>}
+            <div style={{ display:'flex', alignItems:'center', gap:16, padding:'19px 0' }}>
+              <div className="mono" style={{ fontSize:12, color:'var(--clay)', width:20, fontWeight:500 }}>{s.n}</div>
+              <div style={{ flex:1 }}>
+                <div className="serif" style={{ fontSize:23, color:'var(--ink)', fontWeight:500, lineHeight:1.1 }}>{s.title}</div>
+                <div className="sans" style={{ fontSize:13, color:'var(--muted)', marginTop:3 }}>{s.desc}</div>
+              </div>
+              <div style={{ textAlign:'right' }}>
+                <div className="mono" style={{ fontSize:15, color:'var(--ink)', fontWeight:600 }}>{s.meta}</div>
+                <div className="mono" style={{ fontSize:9.5, color:'var(--muted)', letterSpacing:'.1em', textTransform:'uppercase' }}>{s.sub}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{ marginTop:'auto', padding:'0 30px 44px' }}>
+        <div style={{ height:1, background:'var(--hair)', marginBottom:16 }}/>
+        <div className="mono" style={{ fontSize:11, color:'var(--muted)', letterSpacing:'.08em', display:'flex', justifyContent:'space-between' }}>
+          <span>169 DAYS REMAINING</span><span style={{ color:'var(--clay)' }}>NOV 2026</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── B · Study Dashboard ───────────────────────── */
+function HomeB(){
+  const cards = [
+    { ...SECTIONS[0], pct:40, foot:'8 of 20 tasks' },
+    { ...SECTIONS[1], pct:62, foot:'62% mastered' },
+    { ...SECTIONS[2], pct:null, foot:'18 sets' },
+    { ...SECTIONS[3], pct:null, foot:'26 guides' },
+  ];
+  return (
+    <div className="scr" style={{ background:'var(--paper)' }}>
+      {/* navy header */}
+      <div style={{ background:'var(--navy)', padding:'70px 26px 26px', borderBottomLeftRadius:30, borderBottomRightRadius:30 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+          <div className="eyebrow" style={{ color:'rgba(237,230,214,.6)' }}>CFP Exam Prep</div>
+          <div style={{ width:30, height:30, borderRadius:'50%', background:'rgba(255,255,255,.1)' }}/>
+        </div>
+        <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginTop:22 }}>
+          <div>
+            <div className="serif" style={{ fontSize:62, lineHeight:.9, color:'var(--cream)', fontWeight:500 }}>169</div>
+            <div className="sans" style={{ fontSize:13, color:'rgba(237,230,214,.65)', marginTop:6 }}>days until your exam</div>
+          </div>
+          <Ring pct={42} size={74} label="42%" />
+        </div>
+      </div>
+
+      <div style={{ padding:'24px 22px 0' }}>
+        <div className="eyebrow" style={{ color:'var(--muted)', marginBottom:14 }}>Study Areas</div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:14 }}>
+          {cards.map(c=>(
+            <div key={c.key} style={{ background:'var(--card)', borderRadius:18, padding:'16px 15px',
+              border:'1px solid var(--hair)', minHeight:128, display:'flex', flexDirection:'column' }}>
+              <div style={{ width:40, height:40, borderRadius:11, background:'#EEF0F5',
+                display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <Icon name={c.key} size={21}/>
+              </div>
+              <div className="serif" style={{ fontSize:20, color:'var(--ink)', fontWeight:500, marginTop:'auto', paddingTop:14 }}>{c.title}</div>
+              <div className="mono" style={{ fontSize:10.5, color:'var(--muted)', marginTop:5, letterSpacing:'.02em' }}>{c.foot}</div>
+              {c.pct!=null && (
+                <div style={{ height:4, background:'var(--hair)', borderRadius:4, marginTop:9, overflow:'hidden' }}>
+                  <div style={{ width:c.pct+'%', height:'100%', background:'var(--navy)' }}/>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── C · Focused Navy ───────────────────────── */
+function HomeC(){
+  return (
+    <div className="scr" style={{ background:'var(--navy)' }}>
+      <div style={{ padding:'80px 30px 0' }}>
+        <div className="eyebrow" style={{ color:'rgba(237,230,214,.55)' }}>CFP · November 2026</div>
+        <div style={{ marginTop:30, display:'flex', alignItems:'baseline', gap:14 }}>
+          <div className="serif" style={{ fontSize:96, lineHeight:.8, color:'var(--cream)', fontWeight:400 }}>169</div>
+          <div className="sans" style={{ fontSize:14, color:'rgba(237,230,214,.6)', paddingBottom:8 }}>days<br/>remaining</div>
+        </div>
+        <div style={{ height:3, background:'rgba(255,255,255,.12)', borderRadius:3, marginTop:26, overflow:'hidden' }}>
+          <div style={{ width:'42%', height:'100%', background:'var(--clay)' }}/>
+        </div>
+        <div className="mono" style={{ fontSize:10.5, color:'rgba(237,230,214,.5)', letterSpacing:'.1em', marginTop:9 }}>42% READY</div>
+      </div>
+
+      <div style={{ marginTop:34 }}>
+        {SECTIONS.map((s,i)=>(
+          <div key={s.key} style={{ padding:'0 30px' }}>
+            {i!==0 && <div style={{ height:1, background:'rgba(237,230,214,.12)' }}/>}
+            <div style={{ display:'flex', alignItems:'center', gap:18, padding:'20px 0' }}>
+              <Icon name={s.key} size={22} stroke="rgba(237,230,214,.85)"/>
+              <div style={{ flex:1 }}>
+                <div className="serif" style={{ fontSize:23, color:'var(--cream)', fontWeight:500 }}>{s.title}</div>
+                <div className="sans" style={{ fontSize:12.5, color:'rgba(237,230,214,.5)', marginTop:2 }}>{s.desc}</div>
+              </div>
+              <svg width="8" height="14" viewBox="0 0 8 14"><path d="M1 1l6 6-6 6" stroke="rgba(237,230,214,.4)" strokeWidth="1.6" fill="none" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── D · Synthesis (navy + cream cards) ───────────────────────── */
+function HomeD(){
+  const cards = [
+    { ...SECTIONS[0], pct:40, foot:'8 / 20 tasks' },
+    { ...SECTIONS[1], pct:62, foot:'62% mastered' },
+    { ...SECTIONS[2], pct:null, foot:'18 sets' },
+    { ...SECTIONS[3], pct:null, foot:'26 guides' },
+  ];
+  return (
+    <div className="scr" style={{ background:'var(--navy)' }}>
+      <div style={{ padding:'76px 26px 0' }}>
+        <div className="eyebrow" style={{ color:'var(--clay)' }}>CFP Candidate · Nov 2026</div>
+
+        {/* hero countdown + ring */}
+        <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginTop:20 }}>
+          <div>
+            <div className="serif" style={{ fontSize:78, lineHeight:.82, color:'var(--cream)', fontWeight:400 }}>169</div>
+            <div className="sans" style={{ fontSize:13, color:'rgba(237,230,214,.6)', marginTop:8 }}>days until your exam</div>
+          </div>
+          <Ring pct={42} size={76} label="42%" track="rgba(255,255,255,.13)" bar="var(--clay)" />
+        </div>
+      </div>
+
+      <div style={{ padding:'26px 22px 0' }}>
+        <div className="eyebrow" style={{ color:'rgba(237,230,214,.5)', marginBottom:14 }}>Study Areas</div>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:13 }}>
+          {cards.map(c=>(
+            <div key={c.key} style={{ background:'var(--cream)', borderRadius:18, padding:'15px 15px 16px',
+              minHeight:132, display:'flex', flexDirection:'column' }}>
+              <div style={{ width:38, height:38, borderRadius:11, background:'rgba(28,43,74,.08)',
+                display:'flex', alignItems:'center', justifyContent:'center' }}>
+                <Icon name={c.key} size={20}/>
+              </div>
+              <div className="serif" style={{ fontSize:20, color:'var(--navy)', fontWeight:600, marginTop:'auto', paddingTop:14 }}>{c.title}</div>
+              <div className="mono" style={{ fontSize:10, color:'var(--muted)', marginTop:5, letterSpacing:'.02em' }}>{c.foot}</div>
+              {c.pct!=null && (
+                <div style={{ height:4, background:'rgba(28,43,74,.12)', borderRadius:4, marginTop:9, overflow:'hidden' }}>
+                  <div style={{ width:c.pct+'%', height:'100%', background:'var(--navy)' }}/>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ marginTop:'auto', padding:'0 26px 42px' }}>
+        <div style={{ height:1, background:'rgba(237,230,214,.12)', marginBottom:14 }}/>
+        <div className="mono" style={{ fontSize:10.5, color:'rgba(237,230,214,.5)', letterSpacing:'.08em', display:'flex', justifyContent:'space-between' }}>
+          <span>169 DAYS REMAINING</span><span style={{ color:'var(--clay)' }}>NOV 2026</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ───────────────────────── App icons ───────────────────────── */
+const Squircle = ({ children, bg='var(--navy)' }) => (
+  <div style={{ width:150, height:150, borderRadius:34, background:bg, position:'relative', overflow:'hidden',
+    boxShadow:'0 12px 28px rgba(0,0,0,.22)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+    {children}
+  </div>
+);
+
+function IconTile({ label, children }){
+  return (
+    <div style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:13 }}>
+      {children}
+      <div className="mono" style={{ fontSize:11, color:'var(--ink-2)', letterSpacing:'.06em' }}>{label}</div>
+    </div>
+  );
+}
+
+function Icons(){
+  return (
+    <div style={{ display:'flex', gap:34, flexWrap:'wrap', padding:'30px' }}>
+      <IconTile label="Monogram">
+        <Squircle>
+          <div className="serif" style={{ color:'var(--cream)', fontSize:52, fontWeight:500, letterSpacing:'.02em' }}>CFP</div>
+        </Squircle>
+      </IconTile>
+
+      <IconTile label="Serif C + rule">
+        <Squircle>
+          <div style={{ position:'relative', display:'flex', alignItems:'center', justifyContent:'center' }}>
+            <div className="serif" style={{ color:'var(--cream)', fontSize:92, fontWeight:400, lineHeight:1 }}>C</div>
+            <div style={{ position:'absolute', bottom:-2, left:'50%', transform:'translateX(-50%)', width:46, height:3, background:'var(--clay)', borderRadius:3 }}/>
+          </div>
+        </Squircle>
+      </IconTile>
+
+      <IconTile label="Paper + clay">
+        <Squircle bg="var(--cream)">
+          <div className="serif" style={{ color:'var(--navy)', fontSize:52, fontWeight:600 }}>CFP</div>
+          <div style={{ position:'absolute', top:0, left:0, right:0, height:8, background:'var(--clay)' }}/>
+        </Squircle>
+      </IconTile>
+
+      <IconTile label="Rising line">
+        <Squircle>
+          <svg width="150" height="150" viewBox="0 0 150 150">
+            <path d="M30 100 L62 76 L88 92 L120 48" fill="none" stroke="#EDE6D6" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round"/>
+            <circle cx="120" cy="48" r="7" fill="#A8674A"/>
+          </svg>
+        </Squircle>
+      </IconTile>
+    </div>
+  );
+}
+
+/* ───────────────────────── canvas ───────────────────────── */
+function App(){
+  const frame = (node) => (
+    <IOSDevice>{node}</IOSDevice>
+  );
+  return (
+    <DesignCanvas>
+      <DCSection id="v2" title="Home — Synthesis (your picks)" subtitle="Navy bg · cream cards · B's ring + bars · A's small mono lines">
+        <DCArtboard id="d" label="D · Recommended — navy + cream study cards" width={402} height={874}>{frame(<HomeD/>)}</DCArtboard>
+      </DCSection>
+
+      <DCSection id="icons" title="App Icon — Options" subtitle="Tap-to-home tile · now showing all 4">
+        <DCArtboard id="ic" label="Four directions" width={820} height={240}><Icons/></DCArtboard>
+      </DCSection>
+
+      <DCSection id="home" title="Earlier Directions (for reference)" subtitle="A · B · C">
+        <DCArtboard id="a" label="A · Reading Room" width={402} height={874}>{frame(<HomeA/>)}</DCArtboard>
+        <DCArtboard id="b" label="B · Study Dashboard" width={402} height={874}>{frame(<HomeB/>)}</DCArtboard>
+        <DCArtboard id="c" label="C · Focused Navy" width={402} height={874}>{frame(<HomeC/>)}</DCArtboard>
+      </DCSection>
+    </DesignCanvas>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+<title>CFP Study</title>
+
+<!-- iOS home-screen web app -->
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="CFP Study" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="theme-color" content="#1C2B4A" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="apple-touch-icon" href="icons/icon-180.png" />
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; padding: 0; height: 100%; }
+  body {
+    background: #26241F;
+    font-family: 'IBM Plex Sans', system-ui, sans-serif;
+    display: flex; justify-content: center;
+    overscroll-behavior: none;
+  }
+  #root {
+    position: relative;
+    width: 100%; max-width: 440px;
+    height: 100dvh; min-height: 100dvh;
+    overflow: hidden;
+    background: #1C2B4A;
+    box-shadow: 0 0 60px rgba(0,0,0,.4);
+  }
+  /* hide scrollbars but keep scrolling */
+  .screen-scroll::-webkit-scrollbar { width: 0; height: 0; }
+  .screen-scroll { scrollbar-width: none; }
+  button { font-family: inherit; }
+
+  @keyframes slideFwd { from { transform: translateX(100%); } to { transform: translateX(0); } }
+  @keyframes slideBack { from { transform: translateX(-24%); opacity: .6; } to { transform: translateX(0); opacity: 1; } }
+  @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+</style>
+</head>
+<body style="background-color: rgb(38, 36, 31)">
+<div id="root"></div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script src="app/data.js"></script>
+<script type="text/babel" src="app/ui.jsx"></script>
+<script type="text/babel" src="app/home.jsx"></script>
+<script type="text/babel" src="app/checklist.jsx"></script>
+<script type="text/babel" src="app/flashcards.jsx"></script>
+<script type="text/babel" src="app/references.jsx"></script>
+<script type="text/babel" src="app/calculations.jsx"></script>
+<script type="text/babel" src="app/app.jsx"></script>
+</body>
+</html>
